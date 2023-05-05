@@ -1,7 +1,7 @@
-from ubuntu:18.04
+from ubuntu:22.04
 
 # Install prerequisites
-run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     curl \
@@ -11,7 +11,7 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
-    wget
+    wget && apt-get clean
 
 # Copy all data
 copy . /srv/openalpr
@@ -22,7 +22,7 @@ workdir /srv/openalpr/src/build
 
 # Setup the compile environment
 run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
-    make -j2 && \
+    make -j5 && \
     make install
 
 workdir /data
