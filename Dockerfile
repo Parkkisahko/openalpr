@@ -5,6 +5,13 @@ MAINTAINER "Jarkko Santala" <jake@iki.fi>
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
+# Copy all data
+copy . /srv/openalpr
+
+# Setup the build directory
+run mkdir /srv/openalpr/src/build
+workdir /srv/openalpr/src/build
+
 # Install prerequisites
 run apt-get -yq update && \
     apt-get -yq upgrade && \
@@ -19,22 +26,14 @@ run apt-get -yq update && \
         libopencv-dev \
         libtesseract-dev \
         wget && \
-    apt-get clean && \
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
-
-# Copy all data
-copy . /srv/openalpr
-
-# Setup the build directory
-run mkdir /srv/openalpr/src/build
-workdir /srv/openalpr/src/build
-
-# Setup the compile environment
-run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
     make -j5 && \
     make install && \
-    rm -rf /srv/openalpr/src
-
+    apt-get -yq remove build-essential cmake git && \
+    apt-get -yq autoremove \
+    apt-get clean && \
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
+    
 workdir /data
 
 entrypoint ["alpr"]
