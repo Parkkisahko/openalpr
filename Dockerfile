@@ -1,17 +1,26 @@
 from ubuntu:22.04
 
+MAINTAINER "Jarkko Santala" <jake@iki.fi>
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+
 # Install prerequisites
-run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
-    curl \
-    git \
-    libcurl3-dev \
-    libleptonica-dev \
-    liblog4cplus-dev \
-    libopencv-dev \
-    libtesseract-dev \
-    wget && apt-get clean
+run apt-get -yq update && \
+    apt-get -yq upgrade && \
+    apt-get install -yq --no-install-recommends \
+        build-essential \
+        cmake \
+        curl \
+        git \
+        libcurl3-dev \
+        libleptonica-dev \
+        liblog4cplus-dev \
+        libopencv-dev \
+        libtesseract-dev \
+        wget && \
+    apt-get clean && \
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
 
 # Copy all data
 copy . /srv/openalpr
@@ -23,7 +32,8 @@ workdir /srv/openalpr/src/build
 # Setup the compile environment
 run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
     make -j5 && \
-    make install
+    make install && \
+    rm -rf /srv/openalpr/src
 
 workdir /data
 
