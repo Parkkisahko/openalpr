@@ -30,8 +30,8 @@ run apt-get -yq update && \
     make -j5 && \
     make install && \
     apt-get -yq remove build-essential cmake git && \
-    apt-get -yq autoremove \
-    apt-get clean && \
+    apt-get -yq autoremove && \
+    apt-get -yq clean && \
     rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
     
 workdir /data
